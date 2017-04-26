@@ -1,4 +1,4 @@
-setwd('//studentfiles/storage$/Desktop/data mining final project')
+setwd('C:/Users/Fiona/Desktop/data-mining-final-project')
 input <- read.csv('denver.csv')
 
 input_std <- data.frame(scale(input[,-c(1,2)]))
@@ -21,9 +21,22 @@ groups <- function(x, n) {
 
 ### K means 
 #set.seed(45)
-denver_cluster <- kmeans(input[,-c(1:3)], 5, nstart = 20)
+# denver_cluster <- kmeans(input[,-c(1:3)], 5, nstart = 20)
 
-mem_cluster <- denver_cluster$cluster
+library(cluster)
+library(apcluster)
+
+
+#denver_cluster <- hclust(dist(input_std[,-1]), method = 'average')
+
+#denver_cluster <- cluster::agnes(input_std[,-1], method = "ward")
+
+denver_cluster <- apcluster::apcluster(apcluster::negDistMat(r=2), input_std[,-1])
+plot(denver_cluster, input_std[,-1])
+  
+mem_cluster <- cutree(denver_cluster, 5)
+
+#mem_cluster <- denver_cluster$cluster
 mem_cluster <- as.factor(rev(mem_cluster))
 mem_actual <- groups(input$Total.Risk.Factor, 5)
 
